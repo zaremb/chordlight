@@ -229,6 +229,8 @@ Panel {
     combo: "SUPER + SHIFT + K"
     description: "Preview shortcut"
     descriptionMode: root.previewDescriptionMode
+    showChordBorder: root.service ? root.service.showChordBorder : true
+    backgroundOpacity: root.service ? root.service.backgroundOpacity : 84
     sizeFactor: root.previewScale()
   }
 
@@ -805,6 +807,8 @@ Panel {
                         combo: String(previewRow.modelData.combo || "")
                         description: String(previewRow.modelData.description || "")
                         descriptionMode: root.previewDescriptionMode
+                        showChordBorder: root.service ? root.service.showChordBorder : true
+                        backgroundOpacity: root.service ? root.service.backgroundOpacity : 84
                         sizeFactor: root.previewScale()
                         maxWidth: previewRow.width
                         width: Math.max(0, Math.min(implicitWidth, maxWidth))
@@ -976,6 +980,64 @@ Panel {
                     onClicked: root.updateDisplaySetting("descriptionMode", modelData.toLowerCase())
                   }
                 }
+              }
+            }
+
+            PanelSeparator { width: parent.width; strength: 0.08 }
+
+            Column {
+              width: parent.width
+              spacing: Style.space(6)
+
+              Text {
+                text: "CHORD BORDER"
+                color: Color.foreground
+                opacity: 0.70
+                font.pixelSize: Style.font.caption
+                font.bold: true
+              }
+              Row {
+                width: parent.width
+                spacing: Style.space(4)
+                Repeater {
+                  model: ["Show", "Hide"]
+                  Button {
+                    required property string modelData
+                    required property int index
+                    width: (parent.width - Style.space(4)) / 2
+                    text: modelData
+                    selected: (root.service ? root.service.showChordBorder : true) === (index === 0)
+                    onClicked: root.updateDisplaySetting("showChordBorder", index === 0)
+                  }
+                }
+              }
+            }
+
+            PanelSeparator { width: parent.width; strength: 0.08 }
+
+            Column {
+              width: parent.width
+              spacing: Style.space(6)
+
+              Text {
+                text: "BACKGROUND OPACITY  " + Math.round(backgroundOpacitySlider.liveValue) + "%"
+                color: Color.foreground
+                opacity: 0.70
+                font.pixelSize: Style.font.caption
+                font.bold: true
+              }
+              PanelSlider {
+                id: backgroundOpacitySlider
+                bar: root.bar
+                width: parent.width
+                minimum: 0
+                maximum: 100
+                step: 1
+                integer: true
+                value: root.service ? root.service.backgroundOpacity : 84
+                enabled: !!root.service
+                onMoved: function(v) { root.updateDisplaySetting("backgroundOpacity", Math.round(v)) }
+                onReleased: function(v) { root.updateDisplaySetting("backgroundOpacity", Math.round(v)) }
               }
             }
 

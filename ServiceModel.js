@@ -170,6 +170,8 @@ function defaultSettings() {
       position: "bottom-center",
       descriptionMode: "inline",
       pillSize: "medium",
+      showChordBorder: true,
+      backgroundOpacity: 84,
       stackGap: "tight",
       historyCount: 2,
       stackDirection: "normal",
@@ -207,6 +209,12 @@ function normalizeSettings(raw) {
       descriptionMode: descriptions.indexOf(display.descriptionMode) !== -1
         ? display.descriptionMode : defaults.display.descriptionMode,
       pillSize: sizes.indexOf(display.pillSize) !== -1 ? display.pillSize : defaults.display.pillSize,
+      showChordBorder: typeof display.showChordBorder === "boolean"
+        ? display.showChordBorder : defaults.display.showChordBorder,
+      backgroundOpacity: typeof display.backgroundOpacity === "number"
+        && isFinite(display.backgroundOpacity) && Math.floor(display.backgroundOpacity) === display.backgroundOpacity
+        && display.backgroundOpacity >= 0 && display.backgroundOpacity <= 100
+        ? display.backgroundOpacity : defaults.display.backgroundOpacity,
       stackGap: gaps.indexOf(display.stackGap) !== -1 ? display.stackGap : defaults.display.stackGap,
       historyCount: isFinite(count) && Math.floor(count) === count && count >= 0 && count <= 2
         ? count : defaults.display.historyCount,
@@ -296,9 +304,10 @@ function parseTomlScalar(value, type) {
 function settingTomlType(section, key) {
   if (section === "" && key === "schema_version") return "integer"
   if (section === "display") {
+    if (key === "show_chord_border") return "boolean"
     if (["position", "description_mode", "pill_size", "stack_gap", "stack_direction", "history_transparency"].indexOf(key) !== -1)
       return "string"
-    if (key === "history_count" || key === "history_duration_seconds") return "integer"
+    if (key === "background_opacity" || key === "history_count" || key === "history_duration_seconds") return "integer"
   }
   if (section === "guide") {
     if (key === "delay_ms") return "integer"
@@ -350,6 +359,9 @@ function parseSettingsToml(text) {
     return { ok: false, error: "invalid-value-for-display.description_mode" }
   if (display.pill_size !== undefined && validSize.indexOf(display.pill_size) === -1)
     return { ok: false, error: "invalid-value-for-display.pill_size" }
+  if (display.background_opacity !== undefined
+      && (display.background_opacity < 0 || display.background_opacity > 100))
+    return { ok: false, error: "invalid-value-for-display.background_opacity" }
   if (display.stack_gap !== undefined && validGap.indexOf(display.stack_gap) === -1)
     return { ok: false, error: "invalid-value-for-display.stack_gap" }
   if (display.stack_direction !== undefined && validStackDirection.indexOf(display.stack_direction) === -1)
@@ -372,6 +384,8 @@ function parseSettingsToml(text) {
         position: display.position,
         descriptionMode: display.description_mode,
         pillSize: display.pill_size,
+        showChordBorder: display.show_chord_border,
+        backgroundOpacity: display.background_opacity,
         stackGap: display.stack_gap,
         historyCount: display.history_count,
         stackDirection: display.stack_direction,
@@ -400,6 +414,8 @@ function serializeSettingsToml(raw) {
     "position = " + JSON.stringify(d.position),
     "description_mode = " + JSON.stringify(d.descriptionMode),
     "pill_size = " + JSON.stringify(d.pillSize),
+    "show_chord_border = " + d.showChordBorder,
+    "background_opacity = " + d.backgroundOpacity,
     "stack_gap = " + JSON.stringify(d.stackGap),
     "history_count = " + d.historyCount,
     "stack_direction = " + JSON.stringify(d.stackDirection),

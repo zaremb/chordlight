@@ -27,6 +27,8 @@ Item {
   property string displayPosition: "bottom-center"
   property string descriptionMode: "inline"
   property string pillSize: "medium"
+  property bool showChordBorder: true
+  property int backgroundOpacity: 84
   property string stackGap: "tight"
   property int historyCount: 2
   property string stackDirection: "normal"
@@ -506,6 +508,8 @@ Item {
         position: displayPosition,
         descriptionMode: descriptionMode,
         pillSize: pillSize,
+        showChordBorder: showChordBorder,
+        backgroundOpacity: backgroundOpacity,
         stackGap: stackGap,
         historyCount: historyCount,
         stackDirection: stackDirection,
@@ -532,6 +536,8 @@ Item {
     displayPosition = next.display.position
     descriptionMode = next.display.descriptionMode
     pillSize = next.display.pillSize
+    showChordBorder = next.display.showChordBorder
+    backgroundOpacity = next.display.backgroundOpacity
     stackGap = next.display.stackGap
     historyCount = next.display.historyCount
     stackDirection = next.display.stackDirection
@@ -609,6 +615,8 @@ Item {
     var propertyName = String(name || "")
     if (propertyName === "position") next.display.position = value
     else if (propertyName === "descriptionMode") next.display.descriptionMode = value
+    else if (propertyName === "backgroundOpacity") next.display.backgroundOpacity = value
+    else if (propertyName === "showChordBorder") next.display.showChordBorder = value
     else if (propertyName === "pillSize") next.display.pillSize = value
     else if (propertyName === "stackGap") next.display.stackGap = value
     else if (propertyName === "historyCount") next.display.historyCount = value

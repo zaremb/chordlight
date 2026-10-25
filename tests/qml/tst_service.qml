@@ -158,6 +158,7 @@ TestCase {
     compare(defaults.display.position, "bottom-center")
     compare(defaults.display.descriptionMode, "inline")
     compare(defaults.display.pillSize, "medium")
+    compare(defaults.display.showChordBorder, true)
     compare(defaults.display.stackGap, "tight")
     compare(defaults.display.historyCount, 2)
     compare(defaults.display.historyDurationSeconds, 3)
@@ -171,6 +172,7 @@ TestCase {
         position: "top-right",
         descriptionMode: "below",
         pillSize: "large",
+        showChordBorder: false,
         stackGap: "tight",
         historyCount: 1,
         historyDurationSeconds: 10,
@@ -191,6 +193,7 @@ TestCase {
     compare(result.settings.display.position, "top-right")
     compare(result.settings.display.descriptionMode, "below")
     compare(result.settings.display.pillSize, "large")
+    compare(result.settings.display.showChordBorder, false)
     compare(result.settings.display.stackGap, "tight")
     compare(result.settings.display.historyCount, 1)
     compare(result.settings.display.historyDurationSeconds, 10)
@@ -200,6 +203,20 @@ TestCase {
     compare(result.settings.guide.keys.super, false)
     compare(result.settings.guide.keys.alt, true)
     compare(result.settings.debug.traceEnabled, true)
+  }
+
+  function test_backgroundOpacityValidationAndPersistence() {
+    compare(Model.normalizeSettings({}).display.backgroundOpacity, 84)
+    var values = [0, 37, 100]
+    for (var i = 0; i < values.length; i++) {
+      var source = { display: { backgroundOpacity: values[i] } }
+      var result = Model.parseSettingsToml(Model.serializeSettingsToml(source))
+      verify(result.ok)
+      compare(result.settings.display.backgroundOpacity, values[i])
+    }
+    var invalid = ["-1", "101", "0.5", '"50"', "true"]
+    for (var j = 0; j < invalid.length; j++)
+      verify(!Model.parseSettingsToml("[display]\nbackground_opacity = " + invalid[j]).ok)
   }
 
   function test_settingsTomlToleratesCommentsAndUnknownKeys() {
@@ -223,6 +240,8 @@ TestCase {
     verify(!Model.parseSettingsToml("[display\nposition = \\\"top-left\\\"").ok)
     verify(!Model.parseSettingsToml("[display]\nposition = 123").ok)
     verify(!Model.parseSettingsToml("[display]\nhistory_count = 3").ok)
+    verify(!Model.parseSettingsToml('[display]\nshow_chord_border = "false"').ok)
+    compare(Model.parseSettingsToml("[display]\nshow_chord_border = true").settings.display.showChordBorder, true)
     verify(!Model.parseSettingsToml('[display]\nposition = "left-center"').ok)
     verify(!Model.parseSettingsToml("[guide]\ndelay_ms = 60").ok)
     verify(!Model.parseSettingsToml("schema_version = 2").ok)

@@ -9,12 +9,14 @@ BorderSurface {
   property string combo: ""
   property string description: ""
   property string descriptionMode: "inline"
+  property bool showChordBorder: true
+  property int backgroundOpacity: 84
   property real sizeFactor: 1
   property real maxWidth: 2000
 
   readonly property real keyFontSize: Math.max(26, Style.font.displayLarge * 0.95) * sizeFactor
-  readonly property real horizontalPadding: Style.space(32) * sizeFactor
-  readonly property real verticalPadding: Style.space(28) * sizeFactor
+  readonly property real horizontalPadding: Style.space(16) * sizeFactor
+  readonly property real verticalPadding: Style.space(12) * sizeFactor
   readonly property real contentSpacing: Style.space(10) * sizeFactor
   readonly property real descriptionFontSize: keyFontSize * 0.8
   readonly property bool hasDescription: descriptionMode !== "hidden" && description !== ""
@@ -30,9 +32,9 @@ BorderSurface {
   width: implicitWidth
   height: implicitHeight
   clip: true
-  color: Qt.rgba(Color.background.r, Color.background.g, Color.background.b, 0.84)
-  borderSpec: Border.flat(Color.accent, Math.max(2, Style.space(2)))
-  radius: height / 2
+  color: Qt.rgba(Color.background.r, Color.background.g, Color.background.b, backgroundOpacity / 100)
+  borderSpec: showChordBorder ? Border.flat(Color.accent, Math.max(2, Style.space(2))) : Border.none()
+  radius: Style.space(8) * sizeFactor
 
   Column {
     id: contentColumn

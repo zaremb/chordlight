@@ -192,6 +192,8 @@ Item {
     combo: "SUPER + SHIFT + K"
     description: "Sample shortcut"
     descriptionMode: root.displayDescriptionMode
+    showChordBorder: root.service ? root.service.showChordBorder : true
+    backgroundOpacity: root.service ? root.service.backgroundOpacity : 84
     sizeFactor: root.pillSizeFactor
   }
 
@@ -384,6 +386,8 @@ Item {
                 combo: rowCombo
                 description: rowDescription
                 descriptionMode: root.displayDescriptionMode
+                showChordBorder: root.service ? root.service.showChordBorder : true
+                backgroundOpacity: root.service ? root.service.backgroundOpacity : 84
                 sizeFactor: root.pillSizeFactor
                 maxWidth: Math.max(0, screenHost.width - root.pillScreenGutter * 2)
                 x: root.pillX(width, renderedScale, hintStack.width)
